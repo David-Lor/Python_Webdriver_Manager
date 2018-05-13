@@ -22,19 +22,23 @@ class Webdriver(object):
         cookies_path=None,
         autosave_cookies=True,
         user_agent=USERAGENT,
-        timeout=TIMEOUT
+        timeout=TIMEOUT,
+        headless=True
     ):
         """Initialize a Chrome Webdriver object using Selenium.
         :param cookies_path: Path of cookies file (default=None=do not use cookies)
         :param autosave_cookies: Autosave cookies at exit? (default=True)
+        :param headless: Execute headless browser? (default=True)
         The following params are default to Constant Settings on the .py file:
         :param driver_path: Path of chromedriver executable
         :param winsize: Browser window size, format: tuple/list (sizeX, sizeY)
         :param user_agent: User agent string for the browser
+        :param timeout: Page load timeout
         """
         #Create options
         opts = Options()
-        opts.add_argument("--headless")
+        if headless:
+            opts.add_argument("--headless")
         #opts.add_argument("--window-size={},{}".format(winsize[0], winsize[1]))
         opts.add_argument("user-agent="+user_agent)
         #Start browser
@@ -48,6 +52,8 @@ class Webdriver(object):
         self.keys = Keys
         self.cookies_path = cookies_path
         self.autosave_cookies = autosave_cookies
+        self.headless = headless
+        self.window_size = winsize
         #Load cookies
         try:
             self.load_cookies()
