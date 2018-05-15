@@ -2,7 +2,16 @@
 
 A Python class to help using a headless chromedriver Webdriver with Selenium.
 
+Requirements:
+
+* Python 3.x (tested on 3.4, 3.5, 3.6)
+* Selenium for Python (available via pip)
+* chromedriver binary
+* Google Chrome or Chromium installed (required by chromedriver)
+
 ## Functions and examples
+
+_TODO: Add examples for choosing profile-data folder and webdriver bin location, and switching opened windows/tabs_
 
 ### Initialize
 
@@ -11,19 +20,6 @@ from webdrivermgr import Webdriver
 driver = Webdriver()
 browser = driver.get_browser()
 browser.get("https://www.google.com")
-```
-
-### Use cookies
-
-```python
-from webdrivermgr import Webdriver
-driver = Webdriver(cookies_path="/home/david/mycookies.pkl")
-browser = driver.get_browser()
-browser.get("https://www.google.com")
-#Cookies are loaded automatically when driver starts
-driver.load_cookies()
-#Cookies are saved automatically when driver stops
-driver.save_cookies()
 ```
 
 ### Get a PNG screenshot
@@ -49,15 +45,8 @@ driver = Webdriver(
 browser = driver.get_browser()
 browser.get("https://www.google.com")
 #The browser automatically stops when the main application ends, using atexit
-#If webdriver is using cookies, they'll be saved automatically
+#Or we can stop it anytime with:
 driver.stop()
-#But we can avoid auto-cookies saving
-driver.stop(save_cookies=False)
-#We also can avoid auto-cookies saving when webdriver ends
-driver = Webdriver(
-    cookies_path="/home/david/mycookies.pkl",
-    autosave_cookies=False
-)
 #After stopping the webdriver, another Webdriver object must be initialized
-#if we want to run the webdriver again
+#if we want to run the webdriver again!
 ```
