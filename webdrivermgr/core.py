@@ -37,6 +37,10 @@ class Webdriver(object):
         opts = Options()
         if headless:
             opts.add_argument("--headless")
+            #Added for trying on Docker:
+            opts.add_argument("--no-sandbox")
+            opts.add_argument("--disable-gpu")
+            opts.add_argument("--disable-gpu-sandbox")
         #opts.add_argument("--window-size={},{}".format(winsize[0], winsize[1]))
         opts.add_argument("user-data-dir="+data_path)
         opts.add_argument("user-agent="+user_agent)
@@ -53,6 +57,9 @@ class Webdriver(object):
         self.window_size = winsize
         self.data_path = data_path
         self.user_agent = user_agent
+        #Some methods alias
+        self.quit = self.stop
+        self.exit = self.stop
         #Atexit register (stop browser when program ends)
         @atexit.register
         def atexit_f():
