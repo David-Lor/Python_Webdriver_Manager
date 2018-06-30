@@ -1,6 +1,5 @@
 
 #Native libraries
-#import os
 import atexit
 #Installed libraries
 from selenium import webdriver
@@ -8,8 +7,10 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 
 #Constant Settings
+HEADLESS = True
 DRIVER_PATH = "chromedriver" #Path to chromedriver bin
-DATA_PATH = "ChromeDriverData" #Path to store browser data (history, cookies...)
+DATA_PATH = "ChromeDriverData" #Path to store browser data (history, cookies...) (None=store no data on disk)
+PROXY = None #Custom proxy (None=do not use proxy)
 WINDOW_X = 1280 #Browser window size
 WINDOW_Y = 720
 TIMEOUT = 30 #Page Load Timeout
@@ -17,20 +18,22 @@ USERAGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gec
 
 class Webdriver(object):
     def __init__(self,
-        headless=True,
+        headless=HEADLESS,
         driver_path=DRIVER_PATH,
         data_path=DATA_PATH,
         winsize=(WINDOW_X, WINDOW_Y),
         user_agent=USERAGENT,
+        proxy=PROXY,
         timeout=TIMEOUT
     ):
         """Initialize a Chrome Webdriver object using Selenium.
         :param headless: Execute headless browser? (default=True)
         The following params are default to Constant Settings on the .py file:
         :param driver_path: Path of chromedriver executable
-        :param data_path: Path for browser data
+        :param data_path: Path for browser data (None=store no data on disk)
+        :param proxy: Proxy to browse with (None=do not use proxy)
         :param winsize: Browser window size, format: tuple/list (sizeX, sizeY)
-        :param user_agent: User agent string for the browser
+        :param user_agent: User agent string for the browser (None=do not customize u.a.)
         :param timeout: Page load timeout
         """
         #Create options
@@ -42,21 +45,27 @@ class Webdriver(object):
             opts.add_argument("--disable-gpu")
             opts.add_argument("--disable-gpu-sandbox")
         #opts.add_argument("--window-size={},{}".format(winsize[0], winsize[1]))
-        opts.add_argument("user-data-dir="+data_path)
-        opts.add_argument("user-agent="+user_agent)
+        if proxy:
+            opts.add_argument("--proxy-server="+proxy)
+        if data_path:
+            opts.add_argument("user-data-dir="+data_path)
+        if user_agent:
+            opts.add_argument("user-agent="+user_agent)
         #Start browser
         self.browser = webdriver.Chrome(
             executable_path=driver_path,
             chrome_options=opts
         )
-        self.browser.set_window_size(winsize[0], winsize[1])
+        #self.browser.set_window_size(winsize[0], winsize[1])
+        self.set_window_size(winsize[0], winsize[1])
         self.browser.set_page_load_timeout(timeout)
         #Some class attributes
         self.keys = Keys
         self.headless = headless
-        self.window_size = winsize
+        #self.window_size = winsize
         self.data_path = data_path
         self.user_agent = user_agent
+        self.proxy = proxy
         #Some methods alias
         self.quit = self.stop
         self.exit = self.stop
@@ -75,7 +84,10 @@ class Webdriver(object):
         """Stop the webdriver.
         For starting again, another Webdriver object must be initialized
         """
-        self.browser.quit()
+        try:
+            self.browser.quit()
+        except:
+            pass
 
     def is_running(self):
         """Get current running status of webdriver
@@ -101,6 +113,14 @@ class Webdriver(object):
                 file.write(sbytes)
         else:
             return sbytes
+
+    def set_window_size(self, size_x, size_y):
+        """Change browser window size on the fly
+        :param size_x: horizontal size in pixels
+        :param size_y: vertical size in pixels
+        """
+        self.browser.set_window_size(size_x, size_y)
+        self.window_size = (size_x, size_y)
 
     def get_windows(self):
         """Get all the windows/tabs currently opened on the browser
