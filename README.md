@@ -1,23 +1,35 @@
 # Webdriver Manager
 
-A Python class to help using a headless chromedriver Webdriver with Selenium.
+A Python class to help using a headless chromedriver Webdriver with Selenium on Python.
 
 Requirements:
 
 * Python 3.x (tested on 3.4, 3.5, 3.6)
 * Selenium for Python (available via pip)
-* chromedriver binary
-* Google Chrome or Chromium installed (required by chromedriver)
+* chromedriver binary (remember to set it as executable)
+* Google Chrome or Chromium installed on the system (required by chromedriver)
 
 ## Functions and examples
 
-_TODO: Add examples for choosing profile-data folder and webdriver bin location, and switching opened windows/tabs_
+_TODO: Add examples for switching between opened windows/tabs_
 
-### Initialize
+### Basic initialization
 
 ```python
 from webdrivermgr import Webdriver
 driver = Webdriver()
+browser = driver.get_browser()
+browser.get("https://www.google.com")
+```
+
+### Set webdriver bin location, data folder and custom proxy
+```python
+from webdrivermgr import Webdriver
+driver = Webdriver(
+    driver_path="/home/me/.webdrivers/chromedriver",
+    data_path="/home/me/.chromedriverdata",
+    proxy="127.0.0.1:9999"
+)
 browser = driver.get_browser()
 browser.get("https://www.google.com")
 ```
